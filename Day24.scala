@@ -20,7 +20,7 @@ object Day24 {
     val numPointsOfInterest = parseNumPointsOfInterest(map)
 
     val part1 = bfs(map, start, numPointsOfInterest)
-    val part2 = 0
+    val part2 = bfs(map, start, numPointsOfInterest, terminateAtStart = true)
 
     println(s"Part 1: $part1")
     println(s"Part 2: $part2")
@@ -30,7 +30,7 @@ object Day24 {
 
   case class BfsNode(visitNode: VisitNode, depth: Int)
 
-  def bfs(map: Mat2D, start: Coord2D, numPointsOfInterest: Int): Int = {
+  def bfs(map: Mat2D, start: Coord2D, numPointsOfInterest: Int, terminateAtStart: Boolean = false): Int = {
     val visited = mutable.Set[VisitNode]()
     val toVisit = mutable.Queue[BfsNode]()
     toVisit.enqueue(BfsNode(VisitNode(start, Set()), 0))
@@ -42,7 +42,9 @@ object Day24 {
         visited.add(curr.visitNode)
 
         if (curr.visitNode.pointsOfInterest.size == numPointsOfInterest) {
-          return curr.depth
+          if (!terminateAtStart || (terminateAtStart && curr.visitNode.coord == start)) {
+            return curr.depth
+          }
         }
 
         toVisit.enqueueAll(getNeighbors(map, curr.visitNode.coord).map(neighbor => {
