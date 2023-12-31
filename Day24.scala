@@ -61,10 +61,11 @@ object Day24 {
     throw new Error("Solution not found!")
   }
 
-  def getNeighbors(map: Mat2D, coord: Coord2D): Array[Coord2D] = coord match { case (i, j) =>
-    Array((i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1))
-      .filter(coord => isInBounds(map, coord))
-      .filter { case(i, j) => map(i)(j) != WallCell }
+  def getNeighbors(map: Mat2D, coord: Coord2D): Array[Coord2D] = coord match {
+    case (i, j) =>
+      Array((i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1))
+        .filter(coord => isInBounds(map, coord))
+        .filter { case (i, j) => map(i)(j) != WallCell }
   }
 
   def isInBounds(map: Mat2D, coord: Coord2D): Boolean = coord match
