@@ -68,7 +68,9 @@ object Day11 {
   }
 
   case class Move(state: State, distance: Int)
-  case class SearchNode(state: State, distance: Int, prev: Option[SearchNode] = None)
+  case class SearchNode(state: State, distance: Int)
+
+  val progress = mutable.Set[Int]()
 
   def findMinPath(start: State): Int = {
     val visited = mutable.Set[State]()
@@ -78,7 +80,15 @@ object Day11 {
     while (toVisit.nonEmpty) {
       val curr = toVisit.dequeue()
 
+      if (!progress.contains(curr.distance)) {
+        progress.addOne(curr.distance)
+        println(curr.distance)
+      }
+
       if (curr.state.isFinalState) {
+        progress.clear()
+        println()
+        println()
         return curr.distance
       }
 
@@ -89,7 +99,7 @@ object Day11 {
           curr.state
             .getValidMoves()
             .map(move => {
-              SearchNode(move.state, curr.distance + move.distance, Some(curr))
+              SearchNode(move.state, curr.distance + move.distance)
             })
         )
       }
