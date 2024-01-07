@@ -17,12 +17,14 @@ object Day11 {
 //      Floor(Set())
 //    ))
 
-    val start = State(List(
-      Floor(Set("SG", "SM", "PG", "PM")),
-      Floor(Set("TG", "RG", "RM", "CG", "CM")),
-      Floor(Set("TM")),
-      Floor(Set())
-    ))
+    val start = State(
+      List(
+        Floor(Set("SG", "SM", "PG", "PM")),
+        Floor(Set("TG", "RG", "RM", "CG", "CM")),
+        Floor(Set("TM")),
+        Floor(Set())
+      )
+    )
 
     val part1 = findMinPath(start)
     val part2 = 0
@@ -51,15 +53,17 @@ object Day11 {
       val thisFloorAfterMoves = moves.map(move => Floor(pieces.removedAll(move)))
       val neighborFloors = List(elevator - 1, elevator + 1).filter(floors.indices.contains)
 
-      neighborFloors.flatMap(otherFloor => {
-        moves.zip(thisFloorAfterMoves).map { case (move, thisFloorAfterMove) =>
-          val otherFloorAfterMove = Floor(floors(otherFloor).pieces.concat(move))
-          Move(
-            State(floors.updated(elevator, thisFloorAfterMove).updated(otherFloor, otherFloorAfterMove), otherFloor),
-            math.abs(elevator - otherFloor)
-          )
-        }
-      }).filter(_.state.isValid)
+      neighborFloors
+        .flatMap(otherFloor => {
+          moves.zip(thisFloorAfterMoves).map { case (move, thisFloorAfterMove) =>
+            val otherFloorAfterMove = Floor(floors(otherFloor).pieces.concat(move))
+            Move(
+              State(floors.updated(elevator, thisFloorAfterMove).updated(otherFloor, otherFloorAfterMove), otherFloor),
+              math.abs(elevator - otherFloor)
+            )
+          }
+        })
+        .filter(_.state.isValid)
     }
   }
 
@@ -81,9 +85,13 @@ object Day11 {
       if (!visited.contains(curr.state)) {
         visited.addOne(curr.state)
 
-        toVisit.enqueueAll(curr.state.getValidMoves().map(move => {
-          SearchNode(move.state, curr.distance + move.distance, Some(curr))
-        }))
+        toVisit.enqueueAll(
+          curr.state
+            .getValidMoves()
+            .map(move => {
+              SearchNode(move.state, curr.distance + move.distance, Some(curr))
+            })
+        )
       }
     }
 
