@@ -10,14 +10,7 @@ import scala.collection.mutable
 
 object Day11 {
   def main(args: Array[String]): Unit = {
-//    val start = State(List(
-//      Floor(Set("HM", "LM")),
-//      Floor(Set("HG")),
-//      Floor(Set("LG")),
-//      Floor(Set())
-//    ))
-
-    val start = State(
+    val part1Start = State(
       List(
         Floor(Set("SG", "SM", "PG", "PM")),
         Floor(Set("TG", "RG", "RM", "CG", "CM")),
@@ -25,9 +18,17 @@ object Day11 {
         Floor(Set())
       )
     )
+    val part1 = findMinPath(part1Start)
 
-    val part1 = findMinPath(start)
-    val part2 = 0
+    val part2Start = State(
+      List(
+        Floor(Set("SG", "SM", "PG", "PM", "EG", "EM", "DG", "DM")),
+        Floor(Set("TG", "RG", "RM", "CG", "CM")),
+        Floor(Set("TM")),
+        Floor(Set())
+      )
+    )
+    val part2 = findMinPath(part2Start)
 
     println(s"Part 1: $part1")
     println(s"Part 2: $part2")
@@ -70,8 +71,6 @@ object Day11 {
   case class Move(state: State, distance: Int)
   case class SearchNode(state: State, distance: Int)
 
-  val progress = mutable.Set[Int]()
-
   def findMinPath(start: State): Int = {
     val visited = mutable.Set[State]()
     val toVisit = mutable.Queue[SearchNode]()
@@ -80,15 +79,7 @@ object Day11 {
     while (toVisit.nonEmpty) {
       val curr = toVisit.dequeue()
 
-      if (!progress.contains(curr.distance)) {
-        progress.addOne(curr.distance)
-        println(curr.distance)
-      }
-
       if (curr.state.isFinalState) {
-        progress.clear()
-        println()
-        println()
         return curr.distance
       }
 
