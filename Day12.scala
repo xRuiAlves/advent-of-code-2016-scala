@@ -18,7 +18,7 @@ object Day12 {
     val input = readResourceLines("day12.txt")
 
     val part1 = applyInstructions(input, 0, Registers)(TargetRegister)
-    val part2 = 0
+    val part2 = applyInstructions(input, 0, Registers.updated("c", 1))(TargetRegister)
 
     println(s"Part 1: $part1")
     println(s"Part 2: $part2")
