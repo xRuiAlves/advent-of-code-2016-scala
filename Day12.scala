@@ -37,11 +37,10 @@ object Day12 {
 
   def applyInstruction(instruction: String, registers: Registers): InstructionResult = instruction match {
     case s"cpy $op1 $op2" => InstructionResult(registers.updated(op2, getValue(registers, op1)), 1)
-    case s"inc $op" => InstructionResult(registers.updated(op, registers(op) + 1), 1)
-    case s"dec $op" => InstructionResult(registers.updated(op, registers(op) - 1), 1)
+    case s"inc $op"       => InstructionResult(registers.updated(op, registers(op) + 1), 1)
+    case s"dec $op"       => InstructionResult(registers.updated(op, registers(op) - 1), 1)
     case s"jnz $op1 $op2" => InstructionResult(registers, if (getValue(registers, op1) == 0) 1 else op2.toInt)
   }
-
 
   def getValue(registers: Registers, op: String): Int =
     if (op.head.isLetter) registers(op)
