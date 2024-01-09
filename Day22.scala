@@ -39,20 +39,21 @@ object Day22 {
 
   object Node {
     def fromArray(arr: Array[String]): Node = arr match
-      case Array(fs, used, size) => Node(
-        Coord.fromStr(fs),
-        parseSpace(size),
-        parseSpace(used)
-      )
+      case Array(fs, used, size) =>
+        Node(
+          Coord.fromStr(fs),
+          parseSpace(size),
+          parseSpace(used)
+        )
 
     def parseSpace(spaceStr: String): Int = spaceStr.dropRight(1).toInt
   }
 
   case class SearchState(
-    distance: Int,
-    targetCoord: Coord,
-    emptyCoord: Coord,
-    map: Map[Coord, Node]
+      distance: Int,
+      targetCoord: Coord,
+      emptyCoord: Coord,
+      map: Map[Coord, Node]
   )
 
   case class VisitState(targetCoord: Coord, emptyCoord: Coord)
@@ -65,12 +66,14 @@ object Day22 {
     val toVisit = mutable.Queue[SearchState]()
     val visited = mutable.Set[VisitState]()
 
-    toVisit.enqueue(SearchState(
-      distance = 0,
-      targetCoord = nodes.map(_.coord).maxBy(_.x),
-      emptyCoord = nodes.find(_.isEmpty).map(_.coord).get, // Any empty node is fine at this point
-      map = getNodesMap(nodes)
-    ))
+    toVisit.enqueue(
+      SearchState(
+        distance = 0,
+        targetCoord = nodes.map(_.coord).maxBy(_.x),
+        emptyCoord = nodes.find(_.isEmpty).map(_.coord).get, // Any empty node is fine at this point
+        map = getNodesMap(nodes)
+      )
+    )
 
     while (toVisit.nonEmpty) {
       val curr = toVisit.dequeue()
@@ -93,12 +96,14 @@ object Day22 {
               .updated(neighbor, neighborNode.copy(used = 0))
               .updated(curr.emptyCoord, currEmpty.copy(used = neighborNode.used))
 
-            toVisit.enqueue(SearchState(
-              curr.distance + 1,
-              if (neighbor == curr.targetCoord) curr.emptyCoord else curr.targetCoord,
-              neighbor,
-              newMap
-            ))
+            toVisit.enqueue(
+              SearchState(
+                curr.distance + 1,
+                if (neighbor == curr.targetCoord) curr.emptyCoord else curr.targetCoord,
+                neighbor,
+                newMap
+              )
+            )
           })
       }
     }
@@ -107,21 +112,23 @@ object Day22 {
   }
 
   def getNeighbors(map: Map[Coord, Node], coord: Coord): Set[Coord] = coord match {
-    case Coord(x, y) => Set(
-      Coord(x - 1, y),
-      Coord(x + 1, y),
-      Coord(x, y - 1),
-      Coord(x, y + 1)
-    ).filter(map.contains)
+    case Coord(x, y) =>
+      Set(
+        Coord(x - 1, y),
+        Coord(x + 1, y),
+        Coord(x, y - 1),
+        Coord(x, y + 1)
+      ).filter(map.contains)
   }
 
-  def parseNodes(input: Array[String]): Array[Node] = input.drop(2)
+  def parseNodes(input: Array[String]): Array[Node] = input
+    .drop(2)
     .map(_.split(" ").filter(_.nonEmpty).dropRight(2))
     .map(Node.fromArray)
 
   def countViableNodePairs(nodes: Array[Node]): Int = nodes
     .flatMap(nodeA => nodes.map(nodeB => (nodeA, nodeB)))
-    .count {
-      case (nodeA, nodeB) => nodeA != nodeB && !nodeA.isEmpty && nodeB.available >= nodeA.used
+    .count { case (nodeA, nodeB) =>
+      nodeA != nodeB && !nodeA.isEmpty && nodeB.available >= nodeA.used
     }
 }
